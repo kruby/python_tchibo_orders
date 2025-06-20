@@ -1,18 +1,8 @@
-import os
-import xml.etree.ElementTree as ET
-import pandas as pd
-import streamlit as st
-
-# Mapping
-type_map = {'A': 'SSTA', 'B': 'SSTB', 'C': 'SSTC', 'E': 'SSTE'}
-
-# Paths
-base_input_folder = '/Users/thomas/FTP/TCHIBO/SSTA KOMPLET'
-base_processed_folder = '/Users/thomas/Nordisk Company A S/Nordisk Company A S Team Site - BC/Tchibo/Processed'
-xml_tag = 'VBELN'
-
-# Functions
 def get_recent_tag_values(folder_path, tag, limit):
+    if not os.path.exists(folder_path):
+        st.error(f"🚫 Input folder not found: `{folder_path}`")
+        return []
+
     file_infos = []
     for filename in os.listdir(folder_path):
         if filename.endswith('.xml'):
@@ -36,6 +26,10 @@ def get_recent_tag_values(folder_path, tag, limit):
     return values
 
 def get_all_tag_values(folder_path, tag):
+    if not os.path.exists(folder_path):
+        st.error(f"🚫 Processed folder not found: `{folder_path}`")
+        return set()
+
     values = set()
     for filename in os.listdir(folder_path):
         if filename.endswith('.xml'):
@@ -49,30 +43,3 @@ def get_all_tag_values(folder_path, tag):
             except:
                 continue
     return values
-
-# Streamlit UI
-st.title("Tchibo File Processing Check")
-
-n_records = st.number_input("How many recent files to check?", min_value=100, max_value=100000, value=10000, step=500)
-
-recentA = get_recent_tag_values(base_input_folder, xml_tag, n_records)
-
-for key, code in type_map.items():
-    st.subheader(f"Check for {code}")
-    folderB = f"{base_processed_folder}/{code}_Processed"
-    allB = get_all_tag_values(folderB, xml_tag)
-
-    if code == "SSTE":
-        found = [v for v in recentA if v in allB]
-        df = pd.DataFrame(found, columns=["VBELN found NORDISK"])
-    else:
-        missing = [v for v in recentA if v not in allB]
-        df = pd.DataFrame(missing, columns=["VBELN not in NORDISK folders"])
-
-    if df.empty:
-        st.success(f"✅ All {len(recentA)} records found in {code}_Processed.")
-    else:
-        st.warning(f"⚠️ {len(df)} records missing in {code}_Processed.")
-        st.dataframe(df)
-        st.download_button(f"Download missing list for {code}", df.to_csv(index=False), file_name=f"{code}_check.csv")
-
