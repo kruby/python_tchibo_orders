@@ -12,7 +12,8 @@ type_map = {'A': 'SSTA', 'B': 'SSTB', 'C': 'SSTC', 'E': 'SSTE'}
 
 # Paths
 base_input_folder = '/Users/thomas/FTP/TCHIBO/SSTA KOMPLET'
-base_processed_folder = '/Users/thomas/Nordisk Company A S/Nordisk Company A S Team Site - BC/Tchibo/Processed SSTA'
+# base_processed_folder = '/Users/thomas/Nordisk Company A S/Nordisk Company A S Team Site - BC/Tchibo/Processed'
+base_processed_folder = '/Users/thomas/Library/CloudStorage/OneDrive-Deltebiblioteker–NordiskCompanyAS/Nordisk Company A S Team Site - BC/Tchibo/Processed'
 xml_tag = 'VBELN'
 
 # Functions
